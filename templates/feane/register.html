@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="../../static/images/favicon.png" type="">
+
+  <title> Feane - Register </title>
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" />
+
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- nice select  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
+  <!-- font awesome style -->
+  <link href="../../static/css/font-awesome.min.css" rel="stylesheet" />
+
+  <!-- Custom styles for this template -->
+  <link href="../../static/css/style.css" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="../../static/css/responsive.css" rel="stylesheet" />
+
+  <!-- Inline styling adjustments for the layout matching structural synergy -->
+  <style>
+    .auth_section {
+      background-color: #f7f7f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    .custom-auth-card {
+      background: #ffffff;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #f1f1f1;
+      padding: 40px 30px;
+      margin: 40px auto;
+      max-width: 550px;
+      width: 100%;
+      position: relative;
+    }
+    .form-control-custom {
+      width: 100%;
+      height: 50px;
+      border: 1px solid #c5c5c5;
+      border-radius: 10px;
+      padding-left: 15px;
+      outline: none;
+      color: #0c0c0c;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+    .form-control-custom:focus {
+      border-color: #ffbe33;
+      box-shadow: 0 0 5px rgba(255, 190, 51, 0.4);
+    }
+    .auth-btn-box button {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      background-color: #ffbe33;
+      color: #ffffff;
+      border-radius: 45px;
+      border: none;
+      transition: all 0.3s;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+    .auth-btn-box button:hover {
+      background-color: #e6a719;
+    }
+    .auth-switch-link {
+      color: #777777;
+    }
+    .auth-switch-link a {
+      color: #ffbe33;
+      font-weight: 600;
+    }
+    .auth-switch-link a:hover {
+      color: #e6a719;
+      text-decoration: none;
+    }
+    .form-group-checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .form-group-checkbox input {
+      margin-right: 10px;
+      accent-color: #ffbe33;
+      width: 16px;
+      height: 16px;
+    }
+    .form-group-checkbox label {
+      margin: 0;
+      color: #555555;
+      font-size: 0.9rem;
+    }
+    .back-home-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #777777;
+      transition: color 0.2s;
+      font-size: 1.1rem;
+    }
+    .back-home-btn:hover {
+      color: #ffbe33;
+    }
+  </style>
+</head>
+
+<body class="sub_page">
+
+  <!-- auth registration section -->
+  <section class="auth_section layout_padding">
+    <div class="container">
+
+      <div class="custom-auth-card">
+        <!-- Back to Home Arrow Link -->
+        <a href="/" class="back-home-btn" title="Back to Home">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        </a>
+
+        <div class="heading_container heading_center mb-4">
+          <h2 class="font-weight-bold">Create Account</h2>
+          <p class="text-muted small mt-2">Join us to start ordering your favorite meals</p>
+        </div>
+
+        <form action="" method="POST">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="font-weight-semibold text-secondary small">First Name</label>
+              <input type="text" name="first_name" class="form-control-custom" placeholder="John" required>
+            </div>
+            <div class="col-md-6">
+              <label class="font-weight-semibold text-secondary small">Last Name</label>
+              <input type="text" name="last_name" class="form-control-custom" placeholder="Doe" required>
+            </div>
+          </div>
+
+          <label class="font-weight-semibold text-secondary small">Email Address</label>
+          <input type="email" name="email" class="form-control-custom" placeholder="johndoe@example.com" required>
+
+          <label class="font-weight-semibold text-secondary small">Phone Number</label>
+          <input type="tel" name="phone" class="form-control-custom" placeholder="+1 1234567890" required>
+
+          <div class="row">
+            <div class="col-md-6">
+              <label class="font-weight-semibold text-secondary small">Password</label>
+              <input type="password" name="password" class="form-control-custom" placeholder="••••••••" required>
+            </div>
+            <div class="col-md-6">
+              <label class="font-weight-semibold text-secondary small">Confirm Password</label>
+              <input type="password" name="confirm_password" class="form-control-custom" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="form-group-checkbox">
+            <input type="checkbox" name="agree_terms" id="terms" required>
+            <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
+          </div>
+
+          <div class="auth-btn-box">
+            <button type="submit">Register</button>
+          </div>
+
+          <div class="text-center mt-4 auth-switch-link">
+            <span>Already have an account? <a href="/login">Sign In</a></span>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+  <!-- end auth registration section -->
+
+  <script src="../../static/js/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="../../static/js/bootstrap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="https://unpkg.com/isotope-layout@3.0.4/dist/isotope.pkgd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+  <script src="../../static/js/custom.js"></script>
+</body>
+
+</html>
