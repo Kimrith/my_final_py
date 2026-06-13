@@ -1,20 +1,15 @@
 import json
-from itertools import product
 import requests
 from flask import Flask, render_template, abort, request, redirect, url_for, make_response
-from product import products, get_product_by_name
+from product import products
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    categories = sorted(list(set(p.get('category', '').strip() for p in products if p.get('category'))))
 
-    return render_template('feane/index.html',
-        categories = categories,
-        products = products
-    )
+    return render_template('feane/index.html')
 
 @app.route('/menu')
 def menu():
@@ -33,7 +28,7 @@ def about():
 
 @app.route('/contact')
 def book():
-    return render_template('feane/book.html')
+    return render_template('feane/contact.html')
 
 @app.route('/account')
 def account():
