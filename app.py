@@ -1,5 +1,7 @@
+import requests
 import json
 import requests
+# pyrefly: ignore [missing-import]
 from flask import Flask, render_template, abort, request, redirect, url_for, make_response
 from product import products
 
@@ -9,7 +11,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
 
-    return render_template('feane/index.html')
+    return render_template('user/feane/index.html')
 
 @app.route('/menu')
 def menu():
@@ -17,34 +19,34 @@ def menu():
     # We use .strip() to clean up trailing spaces in your data
     categories = sorted(list(set(p.get('category', '').strip() for p in products if p.get('category'))))
 
-    return render_template('feane/menu.html',
+    return render_template('user/feane/menu.html',
         categories = categories,
         products = products
     )
 
 @app.route('/about')
 def about():
-    return render_template('feane/about.html')
+    return render_template('user/feane/about.html')
 
 @app.route('/contact')
 def book():
-    return render_template('feane/contact.html')
+    return render_template('user/feane/contact.html')
 
 @app.route('/account')
 def account():
-    return render_template('feane/account.html')
+    return render_template('user/feane/account.html')
 
 @app.route('/register')
 def register():
-    return render_template('feane/register.html')
+    return render_template('user/feane/register.html')
 
 @app.route('/login')
 def login():
-    return render_template('feane/login.html')
+    return render_template('user/feane/login.html')
 
 @app.route('/jinja')
 def jinja():
-    return  render_template('test_templete.html')
+    return  render_template('user/test_templete.html')
 
 
 @app.get('/product')
@@ -61,7 +63,7 @@ def product_detail():
         abort(404)
 
     return render_template(
-        'feane/product_detail.html',
+        'user/feane/product_detail.html',
         product=product,
         products=products
     )
@@ -129,7 +131,7 @@ def view_cart():
         'total': total
     }
 
-    return render_template('feane/cart.html', cart_items=cart_items, totals=totals)
+    return render_template('user/feane/cart.html', cart_items=cart_items, totals=totals)
 
 @app.route('/update_cart_qty')
 def update_cart_qty():
@@ -243,6 +245,22 @@ def checkout():
     except Exception as e:
         print(f"Error sending to Telegram: {e}")
         return "Sorry, there was an error processing your order."
+
+
+
+# here is the code for contact form
+
+@app.route('/admin/dashboard')
+def dashboard():
+    return render_template('admin/page/dashboard.html')
+
+@app.route('/admin/users')
+def users():
+    return render_template('admin/page/user.html')
+
+@app.route('/admin/products')
+def products():
+    return render_template('admin/page/product.html')
 
 
 if __name__ == '__main__':

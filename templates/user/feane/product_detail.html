@@ -17,6 +17,7 @@
       padding: 90px 0 45px 0;
       background-color: #ffffff;
     }
+
     .img_container {
       background-color: #f9f9f9;
       padding: 40px;
@@ -26,24 +27,29 @@
       align-items: center;
       border: 1px solid #f1f1f1;
     }
+
     .img_container img {
       max-width: 100%;
       height: auto;
       max-height: 380px;
       transition: transform 0.4s ease;
     }
+
     .img_container:hover img {
       transform: scale(1.03);
     }
+
     .detail_textbox {
       padding-left: 20px;
     }
+
     .detail_textbox h2 {
       font-weight: 800;
       color: #222831;
       margin-bottom: 15px;
       font-size: 2.5rem;
     }
+
     .category_badge {
       display: inline-block;
       background-color: #ffbe33;
@@ -56,19 +62,23 @@
       margin-bottom: 15px;
       letter-spacing: 0.5px;
     }
+
     .detail_textbox .price_display {
       font-size: 2.25rem;
       font-weight: 800;
       color: #222831;
       margin: 20px 0;
     }
+
     .action_buttons_row {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       margin-top: 25px;
     }
-    .btn_back, .btn_cart {
+
+    .btn_back,
+    .btn_cart {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -79,18 +89,22 @@
       transition: all 0.3s ease;
       text-decoration: none !important;
     }
+
     .btn_back {
       background-color: #222831;
       color: #ffffff;
     }
+
     .btn_back:hover {
       background-color: #0c0c0c;
       color: #ffffff;
     }
+
     .btn_cart {
       background-color: #ffbe33;
       color: #ffffff;
     }
+
     .btn_cart:hover {
       background-color: #e6a719;
       color: #ffffff;
@@ -103,16 +117,18 @@
       padding: 45px 0 90px 0;
       background-color: #ffffff;
     }
+
     .heading_container h2 {
       font-weight: 700;
       margin-bottom: 35px;
       color: #222831;
     }
+
     .custom-product-card {
       background: #ffffff;
       border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       transition: all 0.3s ease-in-out;
       height: 100%;
       display: flex;
@@ -120,21 +136,25 @@
       border: 1px solid #f1f1f1;
       margin-top: 25px;
     }
+
     .custom-product-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
       border-color: #ffbe33;
     }
+
     .card-img-wrapper {
       position: relative;
       width: 100%;
-      padding-top: 85%; /* Clean responsive proportional baseline height anchor */
+      padding-top: 85%;
+      /* Clean responsive proportional baseline height anchor */
       background: #f9f9f9;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
+
     .card-img-wrapper img {
       position: absolute;
       top: 0;
@@ -145,9 +165,11 @@
       padding: 20px;
       transition: transform 0.4s ease;
     }
+
     .custom-product-card:hover .card-img-wrapper img {
       transform: scale(1.06);
     }
+
     .card-content-box {
       padding: 22px;
       display: flex;
@@ -155,6 +177,7 @@
       flex: 1;
       text-align: left;
     }
+
     .card-content-box h5 {
       font-weight: 700;
       font-size: 1.15rem;
@@ -164,6 +187,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .card-content-box p {
       font-size: 0.9rem;
       color: #777777;
@@ -174,6 +198,7 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+
     .card-action-row {
       margin-top: auto;
       display: flex;
@@ -182,12 +207,14 @@
       padding-top: 15px;
       border-top: 1px solid #f7f7f7;
     }
+
     .card-action-row h6 {
       font-weight: 700;
       font-size: 1.25rem;
       color: #0c0c0c;
       margin: 0;
     }
+
     .card-action-btn {
       width: 42px;
       height: 42px;
@@ -200,11 +227,13 @@
       transition: all 0.2s ease;
       text-decoration: none !important;
     }
+
     .card-action-btn:hover {
       background-color: #e6a719;
       color: #ffffff;
       transform: scale(1.05);
     }
+
     .card-action-btn i {
       font-size: 0.95rem;
     }
@@ -217,7 +246,7 @@
     <div class="bg-box">
       <img src="https://bluorng.com/cdn/shop/files/IMG_7488.jpg?v=1718954173&width=1920" alt="">
     </div>
-    {% include 'share/header.html' %}
+    {% include 'user/share/header.html' %}
   </div>
 
   <section class="product_detail_section">
@@ -262,37 +291,37 @@
         {% set has_matches = namespace(found=false) %}
 
         {% for p in products %}
-          {% if p.category == product.category and p.id != product.id %}
-            {% set has_matches.found = true %}
-            <div class="col-sm-6 col-md-4 col-lg-3 pb-4">
+        {% if p.category == product.category and p.id != product.id %}
+        {% set has_matches.found = true %}
+        <div class="col-sm-6 col-md-4 col-lg-3 pb-4">
 
-              <div class="custom-product-card">
+          <div class="custom-product-card">
 
-                <div class="card-img-wrapper">
-                  <img src="{{ p.image }}" alt="{{ p.title }}">
-                </div>
+            <div class="card-img-wrapper">
+              <img src="{{ p.image }}" alt="{{ p.title }}">
+            </div>
 
-                <div class="card-content-box">
-                  <h5>{{ p.title }}</h5>
-                  <p>{{ p.description }}</p>
+            <div class="card-content-box">
+              <h5>{{ p.title }}</h5>
+              <p>{{ p.description }}</p>
 
-                  <div class="card-action-row">
-                    <h6>${{ p.price }}</h6>
-                    <a href="/product?product_title={{ p.title | urlencode }}" class="card-action-btn" title="View Details">
-                      <i class="fa fa-eye" aria-hidden="true"></i>
-                    </a>
-                  </div>
-                </div>
-
+              <div class="card-action-row">
+                <h6>${{ p.price }}</h6>
+                <a href="/product?product_title={{ p.title | urlencode }}" class="card-action-btn" title="View Details">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </a>
               </div>
             </div>
-          {% endif %}
+
+          </div>
+        </div>
+        {% endif %}
         {% endfor %}
 
         {% if not has_matches.found %}
-          <div class="col-12 text-center text-muted py-5">
-            <p class="lead">We are currently cooking up more choices for this category! Check back soon.</p>
-          </div>
+        <div class="col-12 text-center text-muted py-5">
+          <p class="lead">We are currently cooking up more choices for this category! Check back soon.</p>
+        </div>
         {% endif %}
 
       </div>

@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-6">
+    Dashboard
+</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-gray-500">Users</h2>
+        <p class="text-3xl font-bold mt-2">120</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-gray-500">Products</h2>
+        <p class="text-3xl font-bold mt-2">58</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-gray-500">Orders</h2>
+        <p class="text-3xl font-bold mt-2">241</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-gray-500">Revenue</h2>
+        <p class="text-3xl font-bold mt-2">$12,350</p>
+    </div>
+
+</div>
+
+{% endblock %}

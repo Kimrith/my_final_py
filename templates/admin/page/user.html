@@ -1,0 +1,58 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+
+<div class="p-6">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Users</h1>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+            + Add New User
+        </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <input type="text" placeholder="Search users..."
+            class="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-1/3 focus:ring-2 focus:ring-blue-500 outline-none">
+        <select class="border border-gray-300 rounded-lg px-4 py-2">
+            <option>All Roles</option>
+            <option>Admin</option>
+            <option>Editor</option>
+            <option>Subscriber</option>
+        </select>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="p-4 font-semibold text-gray-700">Name</th>
+                    <th class="p-4 font-semibold text-gray-700">Email</th>
+                    <th class="p-4 font-semibold text-gray-700">Role</th>
+                    <th class="p-4 font-semibold text-gray-700">Status</th>
+                    <th class="p-4 font-semibold text-gray-700 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <!-- Example Row -->
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4">John Doe</td>
+                    <td class="p-4 text-gray-600">john@example.com</td>
+                    <td class="p-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Admin</span>
+                    </td>
+                    <td class="p-4 text-green-600 font-medium">Active</td>
+                    <td class="p-4 text-center">
+                        <button class="text-blue-600 hover:underline mr-3">Edit</button>
+                        <button class="text-red-600 hover:underline">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
