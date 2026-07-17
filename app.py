@@ -4,7 +4,7 @@ import requests
 # pyrefly: ignore [missing-import]
 from flask import Flask, render_template, abort, request, redirect, url_for, make_response
 from product import products
-from admin import users, products, orders
+from admin import users, products_admin, orders
 
 app = Flask(__name__)
 
@@ -261,7 +261,7 @@ def user():
 
 @app.route('/admin/products')
 def product():
-    return render_template('admin/page/product.html', products = products)
+    return render_template('admin/page/product.html', products = products_admin)
 
 @app.route('/admin/orders')
 def order():

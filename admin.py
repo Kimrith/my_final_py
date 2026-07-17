@@ -6,7 +6,7 @@ users = [
     {"id": 5, "name": "Som Dara", "email": "dara@test.com", "role": "customer", "isActive": False}
 ]
 
-products = [
+products_admin = [
     {"id": 101, "name": "Standard Room", "category": "Room", "price": 25.0, "stock": 10},
     {"id": 102, "name": "Deluxe Room", "category": "Room", "price": 45.0, "stock": 5},
     {"id": 103, "name": "Suite", "category": "Room", "price": 80.0, "stock": 2},
