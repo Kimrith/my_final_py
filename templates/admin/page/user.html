@@ -1,4 +1,5 @@
 {% extends 'admin/base.html' %}
+{% import 'admin/popup/macros.html' as ui %}
 
 {% block title %}Users{% endblock %}
 
@@ -8,7 +9,9 @@
     <!-- Header Section -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-gray-800">Users</h1>
-        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+        <!-- Added onclick to trigger the modal -->
+        <button onclick="openAddModal()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
             + Add New User
         </button>
     </div>
@@ -30,6 +33,7 @@
         <table class="w-full text-left border-collapse">
             <thead class="bg-gray-50 border-b">
                 <tr>
+                    <th class="p-4 font-semibold text-gray-700">ID</th>
                     <th class="p-4 font-semibold text-gray-700">Name</th>
                     <th class="p-4 font-semibold text-gray-700">Email</th>
                     <th class="p-4 font-semibold text-gray-700">Role</th>
@@ -38,21 +42,52 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                <!-- Example Row -->
+                {% for user in users %}
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4">John Doe</td>
-                    <td class="p-4 text-gray-600">john@example.com</td>
-                    <td class="p-4"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Admin</span>
+                    <td class="p-4">{{ user.id }}</td>
+                    <td class="p-4">{{ user.name }}</td>
+                    <td class="p-4 text-gray-600">{{ user.email }}</td>
+                    <td class="p-4">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ user.role }}</span>
                     </td>
-                    <td class="p-4 text-green-600 font-medium">Active</td>
+                    <td class="p-4 font-medium {{ 'text-green-600' if user.isActive else 'text-red-600' }}">
+                        {{ 'Active' if user.isActive else 'Inactive' }}
+                    </td>
                     <td class="p-4 text-center">
-                        <button class="text-blue-600 hover:underline mr-3">Edit</button>
+                        <button onclick='editUser({{ user | tojson }})'
+                            class="text-blue-600 hover:underline mr-3">Edit</button>
                         <button class="text-red-600 hover:underline">Delete</button>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
+<!-- Modal Component -->
+{% call ui.modal('user-modal', 'Add New User') %}
+<form id="userForm" class="space-y-4">
+    <input type="hidden" id="userId" name="id">
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Name</label>
+        <input type="text" id="userName" name="name" class="w-full border border-gray-300 rounded-lg p-2 mt-1" required>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="userEmail" name="email" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+            required>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Role</label>
+        <input type="text" id="userRole" name="role" class="w-full border border-gray-300 rounded-lg p-2 mt-1" required>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Status</label>
+        <input type="text" id="userStatus" name="status" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+            required>
+    </div>
+</form>
+{% endcall %}
+<script src="/static/admin/user.js"></script>
 {% endblock %}

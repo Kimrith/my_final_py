@@ -1,0 +1,16 @@
+<!-- templates/components/macros.html -->
+
+{% macro modal(id, title) %}
+<div id="{{ id }}" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <h3 class="text-lg font-bold mb-4">{{ title }}</h3>
+        <!-- Content will be injected here -->
+        {{ caller() }}
+        <div class="flex justify-end mt-4">
+            <button onclick="document.getElementById('{{ id }}').classList.add('hidden')"
+                class="bg-gray-200 px-4 py-2 rounded-lg mr-2">Cancel</button>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Save</button>
+        </div>
+    </div>
+</div>
+{% endmacro %}
