@@ -9,10 +9,10 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-800">Products</h1>
-        <button onclick="openAddProductModal()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-sm transition">
+        <a href="{{ url_for('admin_bp.product', action='add') }}"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-sm transition inline-block text-center">
             + Add Product
-        </button>
+        </a>
     </div>
 
     <!-- Filters/Search -->
@@ -50,9 +50,10 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <button onclick='editProduct({{ product | tojson }})'
-                            class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                        <a href="{{ url_for('admin_bp.product', action='edit', id=product.id) }}"
+                            class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold">Edit</a>
+                        <a href="{{ url_for('admin_bp.product', action='delete', id=product.id) }}"
+                            class="text-red-600 hover:text-red-900 font-semibold">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -61,26 +62,54 @@
     </div>
 </div>
 
-<!-- Product Modal -->
-{% call ui.modal('product-modal', 'Add New Product') %}
-<form id="productForm" class="space-y-4">
-    <input type="hidden" id="productId" name="id">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Product Name</label>
-        <input type="text" id="productName" name="name" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
-            required>
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Price</label>
-        <input type="number" id="productPrice" name="price" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
-            required>
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Stock</label>
-        <input type="number" id="productStock" name="stock" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
-            required>
-    </div>
-</form>
-{% endcall %}
-<script src="/static/admin/product.js"></script>
+<!-- Product Add/Edit Modal -->
+{% if action == 'add' or action == 'edit' %}
+    {% set modal_title = 'Edit Product: ' ~ edit_product.name if action == 'edit' else 'Add New Product' %}
+    {% set form_action = url_for('admin_bp.updateProduct', product_id=edit_product.id) if action == 'edit' else url_for('admin_bp.createProduct') %}
+    
+    {% call ui.modal('product-modal', modal_title, 'productForm', url_for('admin_bp.product')) %}
+    <form id="productForm" action="{{ form_action }}" method="POST" class="space-y-4">
+        <input type="hidden" id="productId" name="id" value="{{ edit_product.id if edit_product else '' }}">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Product Name</label>
+            <input type="text" id="productName" name="name" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+                value="{{ edit_product.name if edit_product else '' }}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Price</label>
+            <input type="number" step="0.01" id="productPrice" name="price" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+                value="{{ edit_product.price if edit_product else '' }}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Stock</label>
+            <input type="number" id="productStock" name="stock" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+                value="{{ edit_product.stock if edit_product else '' }}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="productDescription" name="description" class="w-full border border-gray-300 rounded-lg p-2 mt-1" rows="3">{{ edit_product.description if edit_product else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Category</label>
+            <input type="text" id="productCategory" name="category" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+                value="{{ edit_product.category if edit_product else 'General' }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Image URL</label>
+            <input type="text" id="productImage" name="image" class="w-full border border-gray-300 rounded-lg p-2 mt-1"
+                value="{{ edit_product.image if edit_product else 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png' }}">
+        </div>
+    </form>
+    {% endcall %}
+{% endif %}
+
+<!-- Product Delete Confirmation Modal -->
+{% if action == 'delete' and edit_product %}
+    {% call ui.modal('delete-product-modal', 'Delete Product', 'deleteProductForm', url_for('admin_bp.product')) %}
+    <form id="deleteProductForm" action="{{ url_for('admin_bp.deleteProduct', product_id=edit_product.id) }}" method="POST" class="space-y-4">
+        <p class="text-gray-700">Are you sure you want to delete product <strong>{{ edit_product.name }}</strong>?</p>
+    </form>
+    {% endcall %}
+{% endif %}
+
 {% endblock %}

@@ -36,8 +36,8 @@
                         </span>
                     </td>
                     <td class="p-4 text-center">
-                        <button onclick='editOrder({{ order | tojson }})'
-                            class="text-blue-600 hover:underline">Edit</button>
+                        <a href="{{ url_for('admin_bp.order', action='edit', id=order.id) }}"
+                            class="text-blue-600 hover:underline font-semibold">Edit</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -47,26 +47,21 @@
 </div>
 
 <!-- Order Edit Modal -->
-{% call ui.modal('order-modal', 'Update Order Status') %}
-<form id="orderForm" class="space-y-4">
-    <input type="hidden" id="orderId" name="id">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Status</label>
-        <select id="orderStatus" name="status" class="w-full border rounded-lg p-2 mt-1">
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-        </select>
-    </div>
-</form>
-{% endcall %}
+{% if action == 'edit' and edit_order %}
+    {% call ui.modal('order-modal', 'Update Order Status', 'orderForm', url_for('admin_bp.order')) %}
+    <form id="orderForm" action="{{ url_for('admin_bp.updateOrder', order_id=edit_order.id) }}" method="POST" class="space-y-4">
+        <input type="hidden" id="orderId" name="id" value="{{ edit_order.id }}">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <select id="orderStatus" name="status" class="w-full border rounded-lg p-2 mt-1 bg-white">
+                <option value="pending" {{ 'selected' if edit_order.status == 'pending' }}>Pending</option>
+                <option value="confirmed" {{ 'selected' if edit_order.status == 'confirmed' }}>Confirmed</option>
+                <option value="completed" {{ 'selected' if edit_order.status == 'completed' }}>Completed</option>
+                <option value="cancelled" {{ 'selected' if edit_order.status == 'cancelled' }}>Cancelled</option>
+            </select>
+        </div>
+    </form>
+    {% endcall %}
+{% endif %}
 
-<script>
-    function editOrder(order) {
-        document.getElementById('order-modal').classList.remove('hidden');
-        document.getElementById('orderId').value = order.id;
-        document.getElementById('orderStatus').value = order.status;
-    }
-</script>
 {% endblock %}
