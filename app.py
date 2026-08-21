@@ -1,20 +1,12 @@
-from email.policy import default
 import requests
 import json
-import os
-from werkzeug.utils import secure_filename
-from flask import Flask, render_template, abort, request, redirect, url_for, make_response
+from flask import Flask, render_template, abort, request, redirect, url_for, make_response, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import admin
-from admin import admin_bp
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
 from extensions import db, migrate
 from config import Config
-
-from sqlalchemy import text
-
 app = Flask(__name__)
 
 app.config.from_object(Config)
@@ -63,9 +55,7 @@ def get_products_list():
         "image": p.image,
         "stock": p.stock
     } for p in Product.query.all()]
-
 app.register_blueprint(admin.admin_bp, url_prefix='/admin')
-
 @app.route('/')
 def index():
     return render_template('user/feane/index.html')
@@ -84,17 +74,125 @@ def about():
 def book():
     return render_template('user/feane/contact.html')
 
-@app.route('/account')
-def account():
-    return render_template('user/feane/account.html')
-
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if not first_name or not last_name or not email or not password:
+            flash('All required fields must be filled.', 'danger')
+            return render_template('user/feane/register.html')
+            
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('user/feane/register.html')
+            
+        from models.user import User
+        if User.query.filter_by(email=email).first():
+            flash('This email is already registered.', 'danger')
+            return render_template('user/feane/register.html')
+            
+        try:
+            new_user = User(
+                name=f"{first_name} {last_name}",
+                email=email,
+                password=generate_password_hash(password),
+                roles='customer',
+                status='active',
+                profile_img='default_profile.png'
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful! Please sign in.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating account: {e}', 'danger')
+            
     return render_template('user/feane/register.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        from models.user import User
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password, password):
+            if user.status != 'active':
+                flash('Your account has been deactivated.', 'danger')
+                return render_template('user/feane/login.html')
+                
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            session['user_email'] = user.email
+            session['user_role'] = user.roles
+            flash(f'Welcome, {user.name}!', 'success')
+            return redirect(url_for('account'))
+        else:
+            flash('Invalid email or password.', 'danger')
+            
     return render_template('user/feane/login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.pop('user_name', None)
+    session.pop('user_email', None)
+    session.pop('user_role', None)
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('login'))
+
+@app.route('/account', methods=['GET', 'POST'])
+def account():
+    if 'user_id' not in session:
+        flash('Please login to access your account.', 'warning')
+        return redirect(url_for('login'))
+        
+    from models.user import User
+    user = User.query.get(session['user_id'])
+    if not user:
+        session.clear()
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        full_name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        new_password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if not full_name or not email:
+            flash('Name and email are required.', 'danger')
+            return render_template('user/feane/account.html', user=user)
+            
+        existing_user = User.query.filter(User.email == email, User.id != user.id).first()
+        if existing_user:
+            flash('This email is already taken by another account.', 'danger')
+            return render_template('user/feane/account.html', user=user)
+            
+        if new_password:
+            if new_password != confirm_password:
+                flash('Passwords do not match.', 'danger')
+                return render_template('user/feane/account.html', user=user)
+            user.password = generate_password_hash(new_password)
+            
+        user.name = full_name
+        user.email = email
+        try:
+            db.session.commit()
+            session['user_name'] = user.name
+            session['user_email'] = user.email
+            flash('Profile updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating profile: {e}', 'danger')
+            
+    return render_template('user/feane/account.html', user=user)
 
 @app.route('/jinja')
 def jinja():
@@ -228,9 +326,6 @@ def checkout():
     except Exception as e:
         print(f"Error sending to Telegram: {e}")
         return "Sorry, there was an error processing your order."
-
-
-
 
 
 if __name__ == '__main__':
