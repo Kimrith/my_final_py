@@ -2,8 +2,10 @@ from flask import render_template
 from extensions import db
 from sqlalchemy import text
 from . import admin_bp
+from auths import require_login
 
 @admin_bp.route('/dashboard')
+@require_login
 def dashboard():
     result = db.session.execute(text("SELECT COUNT(*) FROM user"))
     user_count = result.scalar()

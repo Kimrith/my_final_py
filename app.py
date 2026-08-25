@@ -108,6 +108,9 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful! Please sign in.', 'success')
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(url_for('login', next=next_page))
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
@@ -133,6 +136,9 @@ def login():
             session['user_email'] = user.email
             session['user_role'] = user.roles
             flash(f'Welcome, {user.name}!', 'success')
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
             return redirect(url_for('account'))
         else:
             flash('Invalid email or password.', 'danger')
@@ -193,10 +199,6 @@ def account():
             flash(f'Error updating profile: {e}', 'danger')
             
     return render_template('user/feane/account.html', user=user)
-
-@app.route('/jinja')
-def jinja():
-    return render_template('user/test_templete.html')
 
 @app.get('/product')
 def product_detail():
@@ -294,6 +296,9 @@ def remove_from_cart():
 
 @app.route('/checkout', methods=['POST'])
 def checkout():
+    if 'user_id' not in session:
+        flash('Please login or register to complete your checkout.', 'warning')
+        return redirect(url_for('login', next=url_for('view_cart')))
     cart_cookie = request.cookies.get('cart')
     if not cart_cookie:
         return redirect(url_for('view_cart'))

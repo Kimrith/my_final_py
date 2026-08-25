@@ -153,7 +153,7 @@
           {% endif %}
         {% endwith %}
 
-        <form action="{{ url_for('register') }}" method="POST">
+        <form action="{{ url_for('register', next=request.args.get('next')) if request.args.get('next') else url_for('register') }}" method="POST">
           <div class="row">
             <div class="col-md-6">
               <label class="font-weight-semibold text-secondary small">First Name</label>
@@ -192,7 +192,7 @@
           </div>
 
           <div class="text-center mt-4 auth-switch-link">
-            <span>Already have an account? <a href="/login">Sign In</a></span>
+            <span>Already have an account? <a href="{{ url_for('login', next=request.args.get('next')) if request.args.get('next') else url_for('login') }}">Sign In</a></span>
           </div>
         </form>
       </div>

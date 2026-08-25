@@ -288,12 +288,12 @@
 
             <form action="/checkout" method="POST">
               <div class="form-group mb-2">
-                <input type="text" name="username" class="form-control" placeholder="Full Name" required
-                  style="border-radius: 20px;">
+                <input type="text" name="username" class="form-control" placeholder="Full Name"
+                  value="{{ session.get('user_name', '') }}" required style="border-radius: 20px;">
               </div>
               <div class="form-group mb-2">
-                <input type="email" name="email" class="form-control" placeholder="Email Address" required
-                  style="border-radius: 20px;">
+                <input type="email" name="email" class="form-control" placeholder="Email Address"
+                  value="{{ session.get('user_email', '') }}" required style="border-radius: 20px;">
               </div>
               <div class="form-group mb-2">
                 <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required

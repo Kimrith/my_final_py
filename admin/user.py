@@ -5,9 +5,11 @@ from extensions import db
 from models.user import User  # <-- Importing your User model
 from utils import handle_image_upload
 from . import admin_bp
+from auths import require_login
 
 
 @admin_bp.route('/users', methods=['GET'])
+@require_login
 def user():
     action = request.args.get('action')
     user_id = request.args.get('id', type=int)
@@ -54,6 +56,7 @@ def user():
 
 
 @admin_bp.route('/users/create', methods=['POST'])
+@require_login
 def postUser():
     try:
         email = request.form.get('email', '').strip()
@@ -84,6 +87,7 @@ def postUser():
 
 
 @admin_bp.route('/users/update/<int:user_id>', methods=['POST'])
+@require_login
 def edituser(user_id):
     try:
         # Fetch user or return 404 automatically
@@ -111,6 +115,7 @@ def edituser(user_id):
 
 
 @admin_bp.route('/users/delete/<int:user_id>', methods=['POST', 'DELETE'])
+@require_login
 def deleteUser(user_id):
     try:
         user = User.query.get_or_404(user_id)

@@ -1,8 +1,10 @@
 from admin import admin_bp
 from flask import render_template, request, url_for, redirect
+from auths import require_login
 from extensions import db
 
 @admin_bp.route('/orders')
+@require_login
 def order():
     from models.order import Order
     action = request.args.get('action')
@@ -15,6 +17,7 @@ def order():
     return render_template('admin/page/order.html', orders=orders_list, action=action, edit_order=edit_order)
 
 @admin_bp.route('/orders/update/<int:order_id>', methods=['POST'])
+@require_login
 def updateOrder(order_id):
     try:
         from models.order import Order

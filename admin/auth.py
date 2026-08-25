@@ -3,9 +3,13 @@ from werkzeug.security import check_password_hash
 from extensions import db
 from models.user import User
 from . import admin_bp
+from auths import redirect_if_logged_in
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    response = redirect_if_logged_in()
+    if response:
+        return response
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')

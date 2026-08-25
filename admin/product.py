@@ -2,8 +2,10 @@ from flask import render_template, request, redirect, url_for
 from extensions import db
 
 from . import admin_bp
+from auths import require_login
 
 @admin_bp.route('/products')
+@require_login
 def product():
     from models.product import Product
     action = request.args.get('action')
@@ -16,6 +18,7 @@ def product():
     return render_template('admin/page/product.html', products=products_list, action=action, edit_product=edit_product)
 
 @admin_bp.route('/products/create', methods=['POST'])
+@require_login
 def createProduct():
     try:
         from models.product import Product
@@ -42,6 +45,7 @@ def createProduct():
         return f"Error creating product: {e}", 400
 
 @admin_bp.route('/products/update/<int:product_id>', methods=['POST'])
+@require_login
 def updateProduct(product_id):
     try:
         from models.product import Product
@@ -59,6 +63,7 @@ def updateProduct(product_id):
         return f"Error updating product: {e}", 400
 
 @admin_bp.route('/products/delete/<int:product_id>', methods=['POST'])
+@require_login
 def deleteProduct(product_id):
     try:
         from models.product import Product
