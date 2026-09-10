@@ -1,12 +1,14 @@
 from flask import flash, redirect, url_for, request, render_template, session
 from werkzeug.security import check_password_hash
-from extensions import db
+from extensions import db, limiter
 from models.user import User
 from . import admin_bp
 from auths import redirect_if_logged_in
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("2 per minute")
 def login():
+
     response = redirect_if_logged_in()
     if response:
         return response

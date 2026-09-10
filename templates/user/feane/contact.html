@@ -29,9 +29,11 @@
   <link href="../../static/css/font-awesome.min.css" rel="stylesheet" />
 
   <!-- Custom styles for this template -->
-  <link href="../../static/css/style.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/minimal-dev.css') }}" rel="stylesheet" />
   <!-- responsive style -->
-  <link href="../../static/css/responsive.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet" />
+
 
 </head>
 

@@ -29,9 +29,11 @@
   <link href="../../static/css/font-awesome.min.css" rel="stylesheet" />
 
   <!-- Custom styles for this template -->
-  <link href="../../static/css/style.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/minimal-dev.css') }}" rel="stylesheet" />
   <!-- responsive style -->
-  <link href="../../static/css/responsive.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet" />
+
 
   <!-- Inline styling adjustments for the layout matching structural synergy -->
   <style>
@@ -182,7 +184,7 @@
                 <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i> Addresses</a>
               </li>
               <li>
-                <a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                <a href="{{ url_for('front_bp.logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
               </li>
             </ul>
           </div>
@@ -192,7 +194,8 @@
         <div class="col-md-8 col-lg-9">
           <div class="custom-account-card">
             <h4 class="font-weight-bold mb-4">Account Profile Information</h4>
-            <form action="{{ url_for('account') }}" method="POST">
+            <form action="{{ url_for('front_bp.account') }}" method="POST">
+
               <div class="row">
                 <div class="col-md-12">
                   <label class="font-weight-semibold text-secondary small">Full Name</label>

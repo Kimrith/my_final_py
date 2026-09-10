@@ -1,0 +1,358 @@
+/* ==========================================================================
+   Minimal Developer Design System - Professional Front-End Framework
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --primary: #ffbe33;
+  --primary-hover: #e6a719;
+  --primary-light: rgba(255, 190, 51, 0.12);
+  --dark-navy: #0f172a;
+  --dark-surface: #1e293b;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --card-bg: #ffffff;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+/* Base Global Reset & Typography */
+body, h1, h2, h3, h4, h5, h6, input, button, select, textarea, p, a, span {
+  font-family: var(--font-family-base) !important;
+}
+
+body {
+  color: var(--text-dark);
+  background-color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism Header */
+.header_section {
+  position: relative;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 0;
+}
+
+.navbar-brand span {
+  font-weight: 800 !important;
+  font-size: 1.65rem !important;
+  letter-spacing: -0.5px;
+  color: #ffffff !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-brand span::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
+}
+
+.navbar-nav .nav-item .nav-link {
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  padding: 8px 18px !important;
+  border-radius: var(--radius-full);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.navbar-nav .nav-item:hover .nav-link,
+.navbar-nav .nav-item.active .nav-link {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-item.active .nav-link {
+  color: var(--primary) !important;
+  background-color: var(--primary-light);
+}
+
+/* Header Cart Link with Badge */
+.user_option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user_option .user_link,
+.user_option .cart_link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.25s ease;
+  position: relative;
+  text-decoration: none !important;
+}
+
+.user_option .user_link:hover,
+.user_option .cart_link:hover {
+  background: var(--primary);
+  color: #000000;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.user_option .cart_link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Minimalist Filter Pills on Menu */
+.filters_menu {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 35px 0 45px 0;
+  list-style: none;
+}
+
+.filters_menu li {
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.filters_menu li:hover {
+  border-color: var(--primary);
+  color: var(--text-dark);
+}
+
+.filters_menu li.active {
+  background: var(--primary);
+  color: #000000;
+  border-color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255, 190, 51, 0.35);
+}
+
+/* Minimalist Professional Product Cards */
+.custom-product-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.card-img-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 80%;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-img-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 24px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-product-card:hover .card-img-wrapper img {
+  transform: scale(1.08);
+}
+
+.card-content-box {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-content-box h5 {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-content-box p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 18px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-action-row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.card-action-row h6 {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--text-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.card-action-btn {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary);
+  color: #000000;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+
+.card-action-btn:hover {
+  background-color: var(--primary-hover);
+  color: #000000;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(255, 190, 51, 0.4);
+}
+
+/* Section Headings */
+.heading_container h2 {
+  font-weight: 800;
+  font-size: 2.25rem;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+
+/* Minimal Forms & Inputs */
+.form-control, .form-control-custom {
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 12px 16px !important;
+  height: auto !important;
+  font-size: 0.95rem !important;
+  transition: all 0.2s ease !important;
+  background-color: #ffffff !important;
+}
+
+.form-control:focus, .form-control-custom:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(255, 190, 51, 0.25) !important;
+  outline: none !important;
+}
+
+/* Footer Section */
+.footer_section {
+  background-color: var(--dark-navy) !important;
+  color: #94a3b8 !important;
+  padding-top: 70px;
+  padding-bottom: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer_section h4 {
+  color: #ffffff;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-size: 1.15rem;
+}
+
+.footer_detail .footer-logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.footer_detail p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer_social a {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  margin-right: 8px;
+  text-decoration: none !important;
+}
+
+.footer_social a:hover {
+  background: var(--primary);
+  color: #000000;
+  transform: translateY(-2px);
+}
+
+.footer-info {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 50px;
+  padding-top: 25px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #64748b;
+}

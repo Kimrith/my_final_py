@@ -18,3 +18,16 @@ def handle_image_upload(file_storage):
         file_storage.save(os.path.join(upload_folder, filename))
         return filename
     return None
+
+def get_products_list():
+    """Helper function to fetch all products formatted as dictionaries."""
+    from models.product import Product
+    return [{
+        "id": p.id,
+        "title": p.name,
+        "price": p.price,
+        "description": p.description,
+        "category": p.category,
+        "image": p.image,
+        "stock": p.stock
+    } for p in Product.query.all()]
