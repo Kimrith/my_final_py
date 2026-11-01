@@ -451,6 +451,10 @@
             <i class="fa fa-refresh mr-1"></i> Check Payment Status
           </a>
 
+          <a href="{{ url_for('front_bp.complete_bakong_payment', md5=payment.md5, confirm='true') }}" class="btn btn-success btn-block mb-3" style="border-radius: 30px; padding: 11px 24px; font-weight: 700; background-color: #10b981; border: none;">
+            <i class="fa fa-check-circle mr-1"></i> I Have Paid (Confirm Order)
+          </a>
+
           <div>
             <a href="/cart" class="btn-cancel">
               <i class="fa fa-arrow-left mr-1"></i> Cancel & Return to Cart

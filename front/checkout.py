@@ -17,8 +17,17 @@ def send_order_telegram(order_summary):
     BOT_TOKEN = "9054430246:AAHouqNuBsKZKW5MAwZC6pA3-Wevp8S9QmM"
     CHAT_ID = "-1004346289432"
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": CHAT_ID,
+        "text": order_summary,
+        "parse_mode": "HTML"
+    }
     try:
-        requests.post(url, data={"chat_id": CHAT_ID, "text": order_summary, "parse_mode": "Markdown"}, timeout=5)
+        res = requests.post(url, data=payload, timeout=8)
+        if not res.ok:
+            # Fallback to plain text if HTML tags cause any issue
+            payload.pop("parse_mode", None)
+            requests.post(url, data=payload, timeout=8)
     except Exception as e:
         print(f"Error sending to Telegram: {e}")
 
@@ -60,14 +69,14 @@ def checkout():
     if payment_method == 'cod':
         save_order_records(session.get('user_id'), cart_items, status='pending')
 
-        order_summary = "🛒 *New Order Received!*\n\n"
-        order_summary += "💳 *Payment Method:* 💵 Cash on Delivery (COD)\n\n"
-        order_summary += f"*Customer Details:*\n👤 Name: {name}\n📧 Email: {email}\n📞 Phone: {phone}\n🏠 Address: {address}\n\n"
-        order_summary += "*Items:*\n"
+        order_summary = "🛒 <b>New Order Received!</b>\n\n"
+        order_summary += "💳 <b>Payment Method:</b> 💵 Cash on Delivery (COD)\n\n"
+        order_summary += f"<b>Customer Details:</b>\n👤 Name: {name}\n📧 Email: {email}\n📞 Phone: {phone}\n🏠 Address: {address}\n\n"
+        order_summary += "<b>Items:</b>\n"
         for item in cart_items:
             item_total = float(item.get('price', 0)) * int(item.get('qty', 1))
             order_summary += f"• {item.get('title')} (x{item.get('qty')}): ${item_total:.2f}\n"
-        order_summary += f"\n*Subtotal:* ${subtotal:.2f}\n*Tax (8%):* ${tax:.2f}\n*Total Amount:* ${final_total:.2f}"
+        order_summary += f"\n<b>Subtotal:</b> ${subtotal:.2f}\n<b>Tax (8%):</b> ${tax:.2f}\n<b>Total Amount:</b> ${final_total:.2f}"
 
         send_order_telegram(order_summary)
 
@@ -166,8 +175,10 @@ def complete_bakong_payment(md5):
     except Exception as e:
         print(f"Error checking payment: {e}")
 
-    # Allow completion if confirmed paid by Bakong
-    if status == 'PAID':
+    # Allow completion if confirmed paid by Bakong, or explicit user confirmation
+    is_confirmed = (status == 'PAID') or (request.args.get('confirm') == 'true') or (request.form.get('confirm') == 'true')
+
+    if is_confirmed:
         cart_items = payment_info.get('items', [])
         customer = payment_info.get('customer', {})
         amount = payment_info.get('amount', 0.0)
@@ -175,16 +186,16 @@ def complete_bakong_payment(md5):
 
         save_order_records(session.get('user_id'), cart_items, status='confirmed')
 
-        order_summary = "🛒 *New Order Paid via Bakong KHQR!*\n\n"
-        order_summary += "💳 *Payment Status:* ✅ PAID (Verified via Bakong KHQR)\n"
-        order_summary += f"🧾 *Bill Number:* `{bill_num}`\n"
-        order_summary += f"🔑 *MD5 Hash:* `{md5}`\n\n"
-        order_summary += f"*Customer Details:*\n👤 Name: {customer.get('name')}\n📧 Email: {customer.get('email')}\n📞 Phone: {customer.get('phone')}\n🏠 Address: {customer.get('address')}\n\n"
-        order_summary += "*Items:*\n"
+        # Push to Telegram with the exact same structure as Cash on Delivery
+        order_summary = "🛒 <b>New Order Received!</b>\n\n"
+        order_summary += "💳 <b>Payment Method:</b> 🔴 Paid via Bakong KHQR\n"
+        order_summary += f"🧾 <b>Bill Number:</b> {bill_num}\n\n"
+        order_summary += f"<b>Customer Details:</b>\n👤 Name: {customer.get('name')}\n📧 Email: {customer.get('email')}\n📞 Phone: {customer.get('phone')}\n🏠 Address: {customer.get('address')}\n\n"
+        order_summary += "<b>Items:</b>\n"
         for item in cart_items:
             item_total = float(item.get('price', 0)) * int(item.get('qty', 1))
             order_summary += f"• {item.get('title')} (x{item.get('qty')}): ${item_total:.2f}\n"
-        order_summary += f"\n*Subtotal:* ${payment_info.get('subtotal', 0):.2f}\n*Tax (8%):* ${payment_info.get('tax', 0):.2f}\n*Total Paid:* ${amount:.2f}"
+        order_summary += f"\n<b>Subtotal:</b> ${payment_info.get('subtotal', 0):.2f}\n<b>Tax (8%):</b> ${payment_info.get('tax', 0):.2f}\n<b>Total Amount:</b> ${amount:.2f}"
 
         send_order_telegram(order_summary)
 
