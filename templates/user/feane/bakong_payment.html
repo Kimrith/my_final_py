@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Bakong KHQR Payment - Feane</title>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/minimal-dev.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #f7f8f9;
+      min-height: 100vh;
+    }
+
+    .payment-section {
+      padding: 50px 0 80px;
+    }
+
+    .khqr-card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      max-width: 440px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid #eef0f2;
+    }
+
+    .khqr-header {
+      background: #E1251B;
+      color: #ffffff;
+      padding: 20px 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .khqr-logo-text {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .khqr-sub-text {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .khqr-body {
+      padding: 28px 24px 24px;
+      text-align: center;
+    }
+
+    .merchant-info {
+      margin-bottom: 16px;
+    }
+
+    .merchant-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #222831;
+      margin: 0;
+    }
+
+    .merchant-city {
+      font-size: 13px;
+      color: #777777;
+    }
+
+    .amount-display {
+      background: #fdf5f5;
+      border: 1px dashed #f5c2c0;
+      border-radius: 16px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      display: inline-block;
+      min-width: 220px;
+    }
+
+    .amount-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #777;
+      margin-bottom: 2px;
+    }
+
+    .amount-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: #E1251B;
+      line-height: 1.1;
+    }
+
+    .qr-frame {
+      display: inline-block;
+      padding: 14px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      border: 2px solid #f0f0f0;
+      margin-bottom: 20px;
+    }
+
+    .qr-frame img {
+      width: 240px;
+      height: 240px;
+      display: block;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #fff8e6;
+      color: #b78103;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.paid {
+      background: #e6f9ed;
+      color: #128c46;
+    }
+
+    .spinner-border-sm {
+      width: 1rem;
+      height: 1rem;
+      border-width: 0.15em;
+      margin-right: 8px;
+    }
+
+    .instructions {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .btn-verify {
+      background-color: #E1251B;
+      color: #ffffff;
+      font-weight: 700;
+      border-radius: 30px;
+      padding: 12px 24px;
+      width: 100%;
+      border: none;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+    }
+
+    .btn-verify:hover {
+      background-color: #c01b12;
+      color: #ffffff;
+    }
+
+    .btn-cancel {
+      color: #888;
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+
+    .btn-cancel:hover {
+      color: #222;
+      text-decoration: none;
+    }
+
+    .bill-meta {
+      font-size: 11px;
+      color: #999;
+      margin-top: 14px;
+    }
+
+    /* ---- TOAST NOTIFICATION ---- */
+    .payment-toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      border-left: 6px solid #10b981;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 999999;
+      transform: translateY(-80px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .payment-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .toast-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    .toast-desc {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* ---- SUCCESS MODAL POPUP ---- */
+    .payment-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 99999;
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    .payment-modal-card {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 400px;
+      padding: 36px 28px;
+      text-align: center;
+      position: relative;
+      border: 1px solid #f1f5f9;
+      animation: modalSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-check-circle {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.12);
+      animation: pulseGreen 2s infinite;
+    }
+
+    .modal-check-circle i {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.35);
+    }
+
+    .receipt-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .receipt-row:last-child {
+      margin-bottom: 0;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+      70% { box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+
+<body class="sub_page">
+  <div class="hero_area">
+    <div class="bg-box">
+      <img src="{{ url_for('static', filename='images/hero-bg.jpg') }}" alt="">
+    </div>
+    {% include 'user/share/header.html' %}
+  </div>
+
+  <!-- Toast Notification (Top Right) -->
+  <div id="payment-toast" class="payment-toast">
+    <div class="toast-icon">
+      <i class="fa fa-check"></i>
+    </div>
+    <div>
+      <h5 class="toast-title">Payment Successful!</h5>
+      <p class="toast-desc">Verified via Bakong KHQR &bull; ${{ "%.2f"|format(payment.amount) }}</p>
+    </div>
+  </div>
+
+  <!-- Fullscreen Modal Popup -->
+  <div id="payment-modal-overlay" class="payment-modal-backdrop">
+    <div class="payment-modal-card">
+      <div class="modal-check-circle">
+        <i class="fa fa-check"></i>
+      </div>
+      <h3 style="font-weight: 800; color: #1e293b; margin-bottom: 6px;">Payment Successful!</h3>
+      <p style="color: #64748b; font-size: 14px; margin-bottom: 0; line-height: 1.4;">
+        ការទូទាត់ទទួលបានជោគជ័យ
+      </p>
+      <p style="color: #64748b; font-size: 13px; margin-top: 2px;">
+        Your transaction has been verified via Bakong KHQR.
+      </p>
+
+      <div class="receipt-box">
+        <div class="receipt-row">
+          <span style="color: #64748b;">Amount Paid</span>
+          <span style="font-weight: 800; font-size: 20px; color: #10b981;">${{ "%.2f"|format(payment.amount) }}</span>
+        </div>
+        <div class="receipt-row">
+          <span style="color: #64748b;">Bill Number</span>
+          <span style="font-weight: 600; color: #334155;">{{ payment.bill_number }}</span>
+        </div>
+        <div class="receipt-row">
+          <span style="color: #64748b;">Payment Method</span>
+          <span class="badge" style="background-color: #E1251B; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Bakong KHQR</span>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column" style="gap: 10px;">
+        <a href="/" class="btn" style="background-color: #10b981; color: #ffffff; border-radius: 25px; padding: 12px; font-weight: 700; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); text-decoration: none;">
+          <i class="fa fa-home mr-1"></i> Back to Home
+        </a>
+        <a href="/menu" class="btn btn-outline-secondary" style="border-radius: 25px; padding: 10px; font-size: 14px; text-decoration: none;">
+          <i class="fa fa-cutlery mr-1"></i> Browse Menu
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <section class="payment-section">
+    <div class="container">
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'danger' else 'warning' if category == 'warning' else 'success' }} alert-dismissible fade show text-center mb-4" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="khqr-card">
+        <!-- Red KHQR Header -->
+        <div class="khqr-header">
+          <h1 class="khqr-logo-text">KHQR</h1>
+          <div class="khqr-sub-text">Bakong Individual / Merchant</div>
+        </div>
+
+        <div class="khqr-body">
+          <div class="merchant-info">
+            <h3 class="merchant-name">{{ payment.merchant_name }}</h3>
+            <span class="merchant-city"><i class="fa fa-map-marker mr-1" aria-hidden="true"></i> {{ payment.merchant_city }}</span>
+          </div>
+
+          <div class="amount-display">
+            <div class="amount-label">Amount Due</div>
+            <div class="amount-value">${{ "%.2f"|format(payment.amount) }}</div>
+          </div>
+
+          <!-- Dynamic QR Image -->
+          <div class="qr-frame">
+            <img id="khqr-image" src="{{ payment.qr_image }}" alt="Bakong KHQR Code" />
+          </div>
+
+          <!-- Live Status Indicator -->
+          <div id="payment-status-badge" class="status-badge">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span id="status-text">Waiting for payment...</span>
+          </div>
+
+          <p class="instructions">
+            Open <strong>Bakong</strong>, <strong>ABA Mobile</strong>, <strong>Acleda</strong>, or any Cambodian banking app and scan this QR code to complete your payment.
+          </p>
+
+          <a href="{{ url_for('front_bp.complete_bakong_payment', md5=payment.md5) }}" id="btn-check-status" class="btn btn-verify">
+            <i class="fa fa-refresh mr-1"></i> Check Payment Status
+          </a>
+
+          <div>
+            <a href="/cart" class="btn-cancel">
+              <i class="fa fa-arrow-left mr-1"></i> Cancel & Return to Cart
+            </a>
+          </div>
+
+          <div class="bill-meta">
+            Bill #: <strong>{{ payment.bill_number }}</strong> &bull; Currency: <strong>USD</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+  <script>
+    (function () {
+      const md5 = "{{ payment.md5 }}";
+      const checkUrl = "/api/payment/check/" + md5;
+      const completeUrl = "{{ url_for('front_bp.complete_bakong_payment', md5=payment.md5) }}";
+
+      let pollingActive = true;
+      let checkCount = 0;
+      const maxChecks = 120; // Check for up to 6 minutes (every 3 seconds)
+
+      function playSuccessTone() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime);       // Note D5
+          osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.12); // Note A5
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.45);
+        } catch (e) {
+          // Audio autoplay restrictions gracefully handled
+        }
+      }
+
+      function handlePaymentSuccess() {
+        pollingActive = false;
+
+        // 1. Update in-page status badge
+        const badge = document.getElementById('payment-status-badge');
+        if (badge) {
+          badge.className = 'status-badge paid';
+          badge.innerHTML = '<i class="fa fa-check-circle mr-2 text-success" style="font-size: 16px;"></i> Payment Confirmed!';
+        }
+
+        // 2. Play celebratory sound
+        playSuccessTone();
+
+        // 3. Show Toast Notification (top right)
+        const toast = document.getElementById('payment-toast');
+        if (toast) {
+          toast.classList.add('show');
+        }
+
+        // 4. Show Celebratory Modal Popup
+        const modal = document.getElementById('payment-modal-overlay');
+        if (modal) {
+          modal.style.display = 'flex';
+        }
+
+        // 5. Finalize order in the backend (database + telegram + clear cart)
+        fetch(completeUrl, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).catch(err => console.log('Completion sync:', err));
+      }
+
+      function pollPayment() {
+        if (!pollingActive || checkCount >= maxChecks) return;
+        checkCount++;
+
+        fetch(checkUrl)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'PAID') {
+              handlePaymentSuccess();
+            } else {
+              setTimeout(pollPayment, 3000);
+            }
+          })
+          .catch(err => {
+            console.warn("Status check notice:", err);
+            setTimeout(pollPayment, 4000);
+          });
+      }
+
+      // Start automatic polling after 2 seconds
+      setTimeout(pollPayment, 2000);
+    })();
+  </script>
+</body>
+
+</html>

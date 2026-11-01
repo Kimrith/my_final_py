@@ -6,7 +6,7 @@ from . import admin_bp
 from auths import redirect_if_logged_in
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
-@limiter.limit("2 per minute")
+@limiter.limit("5 per minute")
 def login():
 
     response = redirect_if_logged_in()

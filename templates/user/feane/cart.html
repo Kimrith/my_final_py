@@ -257,11 +257,11 @@
               </div>
               <div class="quantity_control">
                 <a href="/update_cart_qty?action=decrease&product_id={{ item.id }}"
-                  class="quantity_btn {% if item.qty <= 1 %}disabled-link{% endif %}">-</a>
-                <div class="quantity_amount">{{ item.qty }}</div>
+                  class="quantity_btn {% if (item.qty|default(1)) <= 1 %}disabled-link{% endif %}">-</a>
+                <div class="quantity_amount">{{ item.qty|default(1) }}</div>
                 <a href="/update_cart_qty?action=increase&product_id={{ item.id }}" class="quantity_btn">+</a>
               </div>
-              <div class="cart_price">${{ "%.2f"|format(item.price * item.qty) }}</div>
+              <div class="cart_price">${{ "%.2f"|format((item.price|default(0)) * (item.qty|default(1))) }}</div>
               <a href="{{ url_for('front_bp.remove_from_cart', product_id=item.id) }}" class="btn_remove" title="Remove Item"><i
 
                   class="fa fa-trash" aria-hidden="true"></i></a>
@@ -290,6 +290,7 @@
             <hr style="border-top: 1px solid rgba(255,255,255,0.1);">
 
             <form action="/checkout" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <div class="form-group mb-2">
                 <input type="text" name="username" class="form-control" placeholder="Full Name"
                   value="{{ session.get('user_name', '') }}" required style="border-radius: 20px;">
@@ -305,6 +306,24 @@
               <div class="form-group mb-3">
                 <textarea name="address" class="form-control" placeholder="Delivery Address" rows="2" required
                   style="border-radius: 15px;"></textarea>
+              </div>
+
+              <div class="form-group mb-3">
+                <label class="text-white small font-weight-bold mb-2 d-block">Select Payment Method</label>
+                <div class="custom-control custom-radio mb-2 p-2 rounded" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);">
+                  <input type="radio" id="pay_bakong" name="payment_method" value="bakong" class="custom-control-input" checked>
+                  <label class="custom-control-label d-flex align-items-center text-white" for="pay_bakong" style="cursor: pointer; font-size: 13px;">
+                    <span class="badge mr-2 px-2 py-1" style="background-color: #E1251B; color: #fff; font-weight: 800; letter-spacing: 0.5px;">KHQR</span>
+                    <span>Bakong KHQR (Scan to Pay)</span>
+                  </label>
+                </div>
+                <div class="custom-control custom-radio p-2 rounded" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);">
+                  <input type="radio" id="pay_cod" name="payment_method" value="cod" class="custom-control-input">
+                  <label class="custom-control-label d-flex align-items-center text-white" for="pay_cod" style="cursor: pointer; font-size: 13px;">
+                    <i class="fa fa-money text-warning mr-2" aria-hidden="true" style="font-size: 16px;"></i>
+                    <span>Cash on Delivery (COD)</span>
+                  </label>
+                </div>
               </div>
 
               <button type="submit" class="btn_checkout" {% if not cart_items %}disabled{% endif %}>

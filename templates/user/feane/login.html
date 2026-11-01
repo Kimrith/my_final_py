@@ -168,6 +168,8 @@
         {% endwith %}
 
         <form action="{{ url_for('front_bp.login', next=request.args.get('next')) if request.args.get('next') else url_for('front_bp.login') }}" method="POST">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="font-weight-semibold text-secondary small">Email Address</label>
           <input type="email" name="email" class="form-control-custom" placeholder="johndoe@example.com" required>
 

@@ -20,25 +20,139 @@
       background-color: #ffffff;
     }
 
-    .img_container {
+    .product_gallery_wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .main_img_box {
+      position: relative;
       background-color: #f9f9f9;
-      padding: 40px;
-      border-radius: 25px;
+      padding: 30px;
+      border-radius: 24px;
       display: flex;
       justify-content: center;
       align-items: center;
       border: 1px solid #f1f1f1;
+      min-height: 380px;
+      max-height: 420px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
 
-    .img_container img {
+    .main_img_box img {
       max-width: 100%;
-      height: auto;
-      max-height: 380px;
-      transition: transform 0.4s ease;
+      max-height: 360px;
+      object-fit: contain;
+      transition: opacity 0.25s ease, transform 0.3s ease;
     }
 
-    .img_container:hover img {
+    .main_img_box:hover img {
       transform: scale(1.03);
+    }
+
+    .gallery_counter {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(34, 40, 49, 0.75);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      z-index: 10;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gallery_nav_btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: #222831;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .gallery_nav_btn:hover {
+      background: #ffbe33;
+      color: #ffffff;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .gallery_nav_btn.prev {
+      left: 15px;
+    }
+
+    .gallery_nav_btn.next {
+      right: 15px;
+    }
+
+    .thumbnails_strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 2px 8px 2px;
+      scrollbar-width: thin;
+    }
+
+    .thumbnails_strip::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .thumbnails_strip::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .thumb_item {
+      flex: 0 0 76px;
+      height: 76px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 2px solid transparent;
+      padding: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .thumb_item img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .thumb_item:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    .thumb_item.active {
+      border-color: #ffbe33;
+      box-shadow: 0 0 0 3px rgba(255, 190, 51, 0.25);
+      transform: translateY(-2px);
     }
 
     .detail_textbox {
@@ -256,8 +370,33 @@
       <div class="row">
 
         <div class="col-md-6">
-          <div class="img_container">
-            <img src="{{ product.image }}" alt="{{ product.title }}">
+          <div class="product_gallery_wrapper">
+            <div class="main_img_box" id="mainImgContainer">
+              {% if product.images and product.images|length > 1 %}
+              <div class="gallery_counter">
+                <i class="fa fa-camera" aria-hidden="true"></i>
+                <span id="galleryCounterText">1 / {{ product.images|length }}</span>
+              </div>
+              <button type="button" class="gallery_nav_btn prev" onclick="changeImage(-1)" aria-label="Previous Image">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="gallery_nav_btn next" onclick="changeImage(1)" aria-label="Next Image">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+              </button>
+              {% endif %}
+
+              <img id="mainProductImg" src="{{ product.image }}" alt="{{ product.title }}">
+            </div>
+
+            {% if product.images and product.images|length > 1 %}
+            <div class="thumbnails_strip" id="thumbnailStrip">
+              {% for img_url in product.images %}
+              <div class="thumb_item {{ 'active' if loop.first else '' }}" data-idx="{{ loop.index0 }}" onclick="selectImage({{ loop.index0 }})">
+                <img src="{{ img_url }}" alt="{{ product.title }} photo {{ loop.index }}">
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
         </div>
 
@@ -333,6 +472,53 @@
 
   <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+  <script>
+    const productImages = {{ (product.images or [product.image]) | tojson }};
+    let currentImageIndex = 0;
+
+    function updateGallery(index) {
+      if (!productImages || productImages.length <= 1) return;
+      currentImageIndex = (index + productImages.length) % productImages.length;
+      
+      const mainImg = document.getElementById('mainProductImg');
+      if (mainImg) {
+        mainImg.style.opacity = '0.3';
+        setTimeout(() => {
+          mainImg.src = productImages[currentImageIndex];
+          mainImg.style.opacity = '1';
+        }, 150);
+      }
+
+      const counterText = document.getElementById('galleryCounterText');
+      if (counterText) {
+        counterText.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
+      }
+
+      const thumbs = document.querySelectorAll('.thumb_item');
+      thumbs.forEach((thumb, idx) => {
+        if (idx === currentImageIndex) {
+          thumb.classList.add('active');
+          thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          thumb.classList.remove('active');
+        }
+      });
+    }
+
+    function selectImage(idx) {
+      updateGallery(idx);
+    }
+
+    function changeImage(step) {
+      updateGallery(currentImageIndex + step);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') changeImage(-1);
+      if (e.key === 'ArrowRight') changeImage(1);
+    });
+  </script>
 </body>
 
 </html>

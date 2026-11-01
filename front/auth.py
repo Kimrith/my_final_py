@@ -4,8 +4,10 @@ from extensions import db, limiter
 from . import front_bp
 
 @front_bp.route('/register', methods=['GET', 'POST'])
-@limiter.limit("2 per minute")
+@limiter.limit("5 per minute")
 def register():
+    if 'user_id' in session:
+        return redirect(url_for('front_bp.index'))
 
     if request.method == 'POST':
         first_name = request.form.get('first_name', '').strip()
@@ -38,11 +40,18 @@ def register():
             )
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration successful! Please sign in.', 'success')
+
+            # Auto-login upon successful registration
+            session['user_id'] = new_user.id
+            session['user_name'] = new_user.name
+            session['user_email'] = new_user.email
+            session['user_role'] = new_user.roles
+
+            flash(f'Registration successful! Welcome, {new_user.name}.', 'success')
             next_page = request.args.get('next')
-            if next_page:
-                return redirect(url_for('front_bp.login', next=next_page))
-            return redirect(url_for('front_bp.login'))
+            if next_page and next_page not in ['/login', '/register', url_for('front_bp.login'), url_for('front_bp.register')]:
+                return redirect(next_page)
+            return redirect(url_for('front_bp.index'))
         except Exception as e:
             db.session.rollback()
             flash(f'Error creating account: {e}', 'danger')
@@ -51,8 +60,10 @@ def register():
 
 
 @front_bp.route('/login', methods=['GET', 'POST'])
-@limiter.limit("2 per minute")
+@limiter.limit("5 per minute")
 def login():
+    if 'user_id' in session:
+        return redirect(url_for('front_bp.index'))
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip()

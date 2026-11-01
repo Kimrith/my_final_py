@@ -17,6 +17,7 @@
 
     <!-- Toolbar / Filter Form -->
     <form method="GET" action="{{ url_for('admin_bp.user') }}" class="flex flex-col md:flex-row gap-4 mb-6">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <!-- Search Input -->
         <input type="text"
                name="search"
@@ -101,6 +102,7 @@
 
     {% call ui.modal('user-modal', modal_title, 'userForm', url_for('admin_bp.user')) %}
     <form id="userForm" action="{{ form_action }}" method="POST" class="space-y-4" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" id="userId" name="id" value="{{ edit_user.id if edit_user else '' }}">
 
         <div>
@@ -173,6 +175,7 @@
 {% if action == 'delete' and edit_user %}
     {% call ui.modal('delete-user-modal', 'Delete User', 'deleteUserForm', url_for('admin_bp.user')) %}
     <form id="deleteUserForm" action="{{ url_for('admin_bp.deleteUser', user_id=edit_user.id) }}" method="POST" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <p class="text-gray-700">Are you sure you want to delete user <strong>{{ edit_user.name }}</strong>?</p>
     </form>
     {% endcall %}

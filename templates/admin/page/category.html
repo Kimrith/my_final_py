@@ -1,0 +1,131 @@
+{% extends 'admin/base.html' %}
+{% import 'admin/popup/macros.html' as ui %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+
+<div class="p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Categories</h1>
+        <a href="{{ url_for('admin_bp.category', action='add') }}"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-sm transition inline-block text-center">
+            + Add Category
+        </a>
+    </div>
+
+    <!-- Filters/Search -->
+    <form method="GET" action="{{ url_for('admin_bp.category') }}" class="flex flex-col sm:flex-row gap-4 mb-6">
+        <input type="text"
+               name="search"
+               value="{{ request.args.get('search', '') }}"
+               placeholder="Search categories..."
+               class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+        <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition">
+            Search
+        </button>
+    </form>
+
+    <!-- Table -->
+    <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-6 py-4 font-semibold text-gray-700">Image</th>
+                    <th class="px-6 py-4 font-semibold text-gray-700">ID</th>
+                    <th class="px-6 py-4 font-semibold text-gray-700">Category Name</th>
+                    <th class="px-6 py-4 font-semibold text-gray-700">Description</th>
+                    <th class="px-6 py-4 font-semibold text-gray-700">Products</th>
+                    <th class="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for category in categories %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">
+                        {% if category.image %}
+                            {% if category.image.startswith('http://') or category.image.startswith('https://') or category.image.startswith('/') %}
+                                {% set cat_img_url = category.image %}
+                            {% else %}
+                                {% set cat_img_url = url_for('static', filename='uploads/' ~ category.image) %}
+                            {% endif %}
+                        {% else %}
+                            {% set cat_img_url = 'https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png' %}
+                        {% endif %}
+                        <img src="{{ cat_img_url }}" alt="{{ category.name }}" class="w-10 h-10 rounded-lg object-cover border border-gray-200" onerror="this.onerror=null; this.src='https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png';">
+                    </td>
+                    <td class="px-6 py-4 text-gray-500">{{ category.id }}</td>
+                    <td class="px-6 py-4 font-semibold text-gray-900">{{ category.name }}</td>
+                    <td class="px-6 py-4 text-gray-600 max-w-xs truncate">{{ category.description or 'No description' }}</td>
+                    <td class="px-6 py-4">
+                        <span class="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full text-xs font-bold">
+                            {{ category.products | length if category.products else 0 }} item(s)
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{{ url_for('admin_bp.category', action='edit', id=category.id) }}"
+                            class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold">Edit</a>
+                        <a href="{{ url_for('admin_bp.category', action='delete', id=category.id) }}"
+                            class="text-red-600 hover:text-red-900 font-semibold">Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                        No categories found. Click <strong>+ Add Category</strong> to create one.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Category Add/Edit Modal -->
+{% if action == 'add' or action == 'edit' %}
+    {% set modal_title = 'Edit Category: ' ~ edit_category.name if action == 'edit' else 'Add New Category' %}
+    {% set form_action = url_for('admin_bp.updateCategory', category_id=edit_category.id) if action == 'edit' else url_for('admin_bp.createCategory') %}
+    
+    {% call ui.modal('category-modal', modal_title, 'categoryForm', url_for('admin_bp.category')) %}
+    <form id="categoryForm" action="{{ form_action }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" id="categoryId" name="id" value="{{ edit_category.id if edit_category else '' }}">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Category Name (varchar 255)</label>
+            <input type="text" id="categoryName" name="name" class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none"
+                value="{{ edit_category.name if edit_category else '' }}" placeholder="e.g. Electronics, Clothing" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Category Image (varchar 255)</label>
+            <div class="mt-1 flex items-center space-x-4">
+                {% if edit_category and edit_category.image %}
+                    {% if edit_category.image.startswith('http://') or edit_category.image.startswith('https://') or edit_category.image.startswith('/') %}
+                        {% set edit_cat_img = edit_category.image %}
+                    {% else %}
+                        {% set edit_cat_img = url_for('static', filename='uploads/' ~ edit_category.image) %}
+                    {% endif %}
+                    <img id="imagePreview" src="{{ edit_cat_img }}" alt="Category Image" class="w-12 h-12 rounded-lg object-cover border border-gray-300">
+                {% endif %}
+                <input type="file" id="categoryImage" name="image" accept="image/*" class="w-full border border-gray-300 rounded-lg p-1.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Description (text)</label>
+            <textarea id="categoryDescription" name="description" class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" rows="3" placeholder="Category description (optional)">{{ edit_category.description if edit_category else '' }}</textarea>
+        </div>
+    </form>
+    {% endcall %}
+{% endif %}
+
+<!-- Category Delete Confirmation Modal -->
+{% if action == 'delete' and edit_category %}
+    {% call ui.modal('delete-category-modal', 'Delete Category', 'deleteCategoryForm', url_for('admin_bp.category')) %}
+    <form id="deleteCategoryForm" action="{{ url_for('admin_bp.deleteCategory', category_id=edit_category.id) }}" method="POST" class="space-y-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <p class="text-gray-700">Are you sure you want to delete category <strong>{{ edit_category.name }}</strong>?</p>
+    </form>
+    {% endcall %}
+{% endif %}
+
+{% endblock %}

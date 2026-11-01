@@ -8,4 +8,5 @@ from . import dashboard
 from . import user
 from . import product
 from . import order
+from . import category
 from . import auth
